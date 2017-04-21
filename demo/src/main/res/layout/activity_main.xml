@@ -7,19 +7,34 @@
     android:orientation="vertical"
     tools:context="com.halohoop.rollsquareview_demo.MainActivity">
 
-    <com.halohoop.rollsquareview.widgets.RollSquareViewMain
+    <com.halohoop.rollsquareview.widgets.RollSquareView
         android:id="@+id/rollSquareView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:background="@drawable/default_bg"
-        app:line_count="6" />
+        app:is_clockwise="true"
+        app:line_count="3" />
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_weight="1"
-        android:onClick="startRoll"
-        android:text="startRoll" />
+        android:orientation="horizontal"
+        android:layout_height="0dp">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="startRoll"
+            android:text="开始滚动" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="stopRoll"
+            android:text="结束滚动" />
+    </LinearLayout>
+
 
 </LinearLayout>
