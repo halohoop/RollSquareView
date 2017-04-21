@@ -11,16 +11,20 @@
         android:id="@+id/rollSquareView1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:background="@drawable/default_bg"
-        app:is_clockwise="true"
-        app:line_count="3" />
+        app:half_rect_width="15dp"
+        app:is_clockwise="false"
+        app:line_count="2"
+        android:visibility="invisible"
+        app:roll_when_show_stop_when_hide="false"
+        app:square_color="#ff820e" />
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        android:layout_height="0dp">
+        android:orientation="horizontal">
 
         <Button
             android:layout_width="0dp"
@@ -28,12 +32,20 @@
             android:layout_weight="1"
             android:onClick="startRoll"
             android:text="开始滚动" />
+
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="stopRoll"
             android:text="结束滚动" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="resetRoll"
+            android:text="重置滚动" />
     </LinearLayout>
 
 

@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
@@ -36,6 +35,13 @@ public class RollSquareView extends View {
     private float mRotateDegree;
     private boolean mAllowRoll = false;
     private boolean mIsRolling = false;
+    private int mSpeed = 250;
+    private boolean mRollWhenShowAndStopWhenHide = false;
+    /**
+     * 一个方块的动画结束的后是否需要重置(再从startEmpty开始)
+     */
+    private boolean mIsReset = false;
+    private int mSquareColor;
 
     public RollSquareView(Context context) {
         this(context, null);
@@ -53,7 +59,11 @@ public class RollSquareView extends View {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RollSquareView);
+        mRollWhenShowAndStopWhenHide = typedArray.getBoolean(R.styleable.RollSquareView_roll_when_show_stop_when_hide, false);
         mLineCount = typedArray.getInteger(R.styleable.RollSquareView_line_count, 3);
+        int defaultColor = context.getResources().getColor(R.color.default_color);
+        mSquareColor = typedArray.getColor(R.styleable.RollSquareView_square_color, defaultColor);
+        mSpeed = typedArray.getInteger(R.styleable.RollSquareView_roll_speed, 250);
         if (mLineCount < 3) {
             mLineCount = 3;//至少要九个方块
         }
@@ -83,7 +93,7 @@ public class RollSquareView extends View {
 
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(mSquareColor);
         initSquares(mStartEmptyPosition);
     }
 
@@ -234,7 +244,7 @@ public class RollSquareView extends View {
     }
 
     public void startRoll() {
-        if (!mIsRolling) {
+        if (!mIsRolling && getVisibility() == View.VISIBLE) {
             mAllowRoll = true;
             FixSquare currEmptyFixSquare = mFixSquares[mCurrEmptyPosition];
             FixSquare rollSquare = currEmptyFixSquare.next;
@@ -246,9 +256,7 @@ public class RollSquareView extends View {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     mIsRolling = true;
-                    mRollSquare.rectF.set(mFixSquares[mCurrEmptyPosition].next.rectF);
-                    mRollSquare.index = mFixSquares[mCurrEmptyPosition].next.index;
-                    setRollSquareRotateCenter(mRollSquare, mIsClockwise);
+                    updateRollSquare();
                     //让空square的next隐藏，现在FixSquares中那就是有两个隐藏了
                     mFixSquares[mCurrEmptyPosition].next.isShow = false;
                     //然后滚动的suqare需要显示出来
@@ -265,14 +273,37 @@ public class RollSquareView extends View {
                     if (mAllowRoll) {
                         startRoll();
                     }
+                    if (mIsReset) {
+                        mCurrEmptyPosition = mStartEmptyPosition;
+                        //重置所有的
+                        for (int i = 0; i < mFixSquares.length; i++) {
+                            mFixSquares[i].isShow = true;
+                        }
+                        mFixSquares[mCurrEmptyPosition].isShow = false;
+                        updateRollSquare();
+                        invalidate();
+                        startRoll();
+                        mIsReset = false;
+                    }
                 }
             });
             animatorSet.start();
         }
     }
 
+    private void updateRollSquare() {
+        mRollSquare.rectF.set(mFixSquares[mCurrEmptyPosition].next.rectF);
+        mRollSquare.index = mFixSquares[mCurrEmptyPosition].next.index;
+        setRollSquareRotateCenter(mRollSquare, mIsClockwise);
+    }
+
     public void stopRoll() {
         mAllowRoll = false;
+    }
+
+    public void resetRoll() {
+        stopRoll();
+        mIsReset = true;
     }
 
     private void setRollSquareRotateCenter(RollSquare rollSquare, boolean isClockwise) {
@@ -291,13 +322,13 @@ public class RollSquareView extends View {
         }
         //以下和顺不顺时针有关，其中判断条件还包含了角落的，但是无关紧要，上边的判断已经过滤掉角落的了
         //走到下面的判断的都不可能是角落的index
-        else if (rollSquare.index % 3 == 0) {//左边
+        else if (rollSquare.index % mLineCount == 0) {//左边
             rollSquare.cx = rollSquare.rectF.right;
             rollSquare.cy = isClockwise ? rollSquare.rectF.top : rollSquare.rectF.bottom;
         } else if (rollSquare.index < mLineCount) {//上边
             rollSquare.cx = isClockwise ? rollSquare.rectF.right : rollSquare.rectF.left;
             rollSquare.cy = rollSquare.rectF.bottom;
-        } else if ((rollSquare.index + 1) % 3 == 0) {//右边
+        } else if ((rollSquare.index + 1) % mLineCount == 0) {//右边
             rollSquare.cx = rollSquare.rectF.left;
             rollSquare.cy = isClockwise ? rollSquare.rectF.bottom : rollSquare.rectF.top;
         } else if (rollSquare.index > (mLineCount - 1) * mLineCount) {//下边
@@ -307,7 +338,7 @@ public class RollSquareView extends View {
     }
 
     private ValueAnimator createRollValueAnimator() {
-        ValueAnimator rollAnim = ValueAnimator.ofFloat(0, 90).setDuration(500);
+        ValueAnimator rollAnim = ValueAnimator.ofFloat(0, 90).setDuration(mSpeed);
         rollAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -325,7 +356,7 @@ public class RollSquareView extends View {
         float endAnimValue = 0;
         PropertyValuesHolder left = null;
         PropertyValuesHolder top = null;
-        ValueAnimator valueAnimator = new ValueAnimator().setDuration(500);
+        ValueAnimator valueAnimator = new ValueAnimator().setDuration(mSpeed);
         if (isNextRollLeftOrRight(currEmptyFixSquare, rollSquare)) {
             if (mIsClockwise && currEmptyFixSquare.index > rollSquare.index//顺时针且在第一行
                     || !mIsClockwise && currEmptyFixSquare.index > rollSquare.index) {//逆时针且在最后一行
@@ -398,6 +429,18 @@ public class RollSquareView extends View {
         if (mRollSquare.isShow) {
             canvas.rotate(mIsClockwise ? mRotateDegree : -mRotateDegree, mRollSquare.cx, mRollSquare.cy);
             canvas.drawRoundRect(mRollSquare.rectF, 10, 10, mPaint);
+        }
+    }
+
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        if (visibility == View.VISIBLE) {
+            if (mRollWhenShowAndStopWhenHide) {
+                startRoll();
+            }
+        } else {
+            stopRoll();
         }
     }
 }
