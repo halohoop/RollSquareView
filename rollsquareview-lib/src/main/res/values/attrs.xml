@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RollSquareViewMain">
+        <attr name="half_rect_width" format="dimension" />
+        <attr name="rect_divier_width" format="dimension" />
+        <attr name="start_empty_position" format="integer" />
+        <attr name="is_clockwise" format="boolean" />
+        <attr name="line_count" format="integer"  />
+    </declare-styleable>
+</resources>
