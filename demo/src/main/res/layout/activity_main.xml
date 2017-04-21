@@ -14,9 +14,10 @@
         android:layout_weight="3"
         android:background="@drawable/default_bg"
         app:half_rect_width="15dp"
+        app:start_empty_position="3"
         app:is_clockwise="false"
-        app:line_count="2"
-        android:visibility="invisible"
+        app:line_count="6"
+        android:visibility="visible"
         app:roll_when_show_stop_when_hide="false"
         app:square_color="#ff820e" />
 

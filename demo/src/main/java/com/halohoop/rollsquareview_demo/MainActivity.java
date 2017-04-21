@@ -18,13 +18,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startRoll(View view) {
-        rollSquareView1.setVisibility(View.VISIBLE);
         rollSquareView1.startRoll();
+//        rollSquareView1.setVisibility(View.VISIBLE);
     }
 
     public void stopRoll(View view) {
-//        rollSquareView1.stopRoll();
-        rollSquareView1.setVisibility(View.GONE);
+        rollSquareView1.stopRoll();
+//        rollSquareView1.setVisibility(View.GONE);
     }
     public void resetRoll(View view) {
         rollSquareView1.resetRoll();
