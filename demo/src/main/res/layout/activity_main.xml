@@ -18,6 +18,8 @@
         app:start_empty_position="3"
         app:is_clockwise="false"
         app:line_count="4"
+        app:fix_round_cornor="10"
+        app:roll_round_cornor="30"
         android:visibility="visible"
         app:roll_when_show_stop_when_hide="false"
         app:square_color="#ff820e" />

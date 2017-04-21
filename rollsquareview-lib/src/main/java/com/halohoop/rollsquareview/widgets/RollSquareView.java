@@ -31,6 +31,11 @@ public class RollSquareView extends View {
     private int mStartEmptyPosition;
     private int mCurrEmptyPosition;
     private int mLineCount;
+    /**
+     * 方框的圆角半径
+     */
+    private float mRollRoundCornor;
+    private float mFixRoundCornor;
 
     private float mRotateDegree;
     private boolean mAllowRoll = false;
@@ -61,6 +66,8 @@ public class RollSquareView extends View {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RollSquareView);
         mRollWhenShowAndStopWhenHide = typedArray.getBoolean(R.styleable.RollSquareView_roll_when_show_stop_when_hide, false);
         mLineCount = typedArray.getInteger(R.styleable.RollSquareView_line_count, 3);
+        mRollRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_roll_round_cornor, 10);
+        mFixRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_fix_round_cornor, 10);
         int defaultColor = context.getResources().getColor(R.color.default_color);
         mSquareColor = typedArray.getColor(R.styleable.RollSquareView_square_color, defaultColor);
         mSpeed = typedArray.getInteger(R.styleable.RollSquareView_roll_speed, 250);
@@ -423,12 +430,12 @@ public class RollSquareView extends View {
     protected void onDraw(Canvas canvas) {
         for (int i = 0; i < mFixSquares.length; i++) {
             if (mFixSquares[i].isShow) {
-                canvas.drawRoundRect(mFixSquares[i].rectF, 10, 10, mPaint);
+                canvas.drawRoundRect(mFixSquares[i].rectF, mFixRoundCornor, mFixRoundCornor, mPaint);
             }
         }
         if (mRollSquare.isShow) {
             canvas.rotate(mIsClockwise ? mRotateDegree : -mRotateDegree, mRollSquare.cx, mRollSquare.cy);
-            canvas.drawRoundRect(mRollSquare.rectF, 10, 10, mPaint);
+            canvas.drawRoundRect(mRollSquare.rectF, mRollRoundCornor, mRollRoundCornor, mPaint);
         }
     }
 
