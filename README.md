@@ -7,6 +7,41 @@
 ![usage pic](./roll_demo.png)
 ---
 
+## How to use it
+
+Demo:
+
+    <com.halohoop.rollsquareview.widgets.RollSquareView
+        android:id="@+id/rollSquareView1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@drawable/default_bg"
+        app:half_rect_width="15dp"
+        app:rect_divier_width="8dp"
+        app:start_empty_position="3"
+        app:is_clockwise="false"
+        app:line_count="4"
+        app:fix_round_cornor="10"
+        app:roll_round_cornor="30"
+        android:visibility="visible"
+        app:roll_interpolator="@android:anim/anticipate_overshoot_interpolator"
+        app:roll_when_show_stop_when_hide="false"
+        app:square_color="#ff820e" />
+
+## Setting Description
+
+* half\_rect\_width:半个方块的宽度，单位dp
+* rect\_divier\_width:方块之间间隔宽度，单位dp
+* start\_empty\_position:初始空出的位置
+* is\_clockwise:是否顺时针旋转
+* line\_count:一行的数量，最少为3
+* fix\_round\_cornor:固定的方框的圆角半径
+* roll\_round\_cornor:旋转的方框的圆角半径，如果这两个圆角半径设置成不一样的值就会得到上面图1的效果，设置成一样就是图2.
+* roll\_when\_show\_stop\_when\_hide:是否自动开始自定旋转，如果设置为false，则需要手动调用startRoll()方法(下文会提到)才会开始运动，设置为true则设置View.Visibility就会自动开始旋转。
+* square\_color:方块的颜色。使用十六进制代码的形式（如：#333、#8e8e8e）
+* roll\_interpolator:动画的插值器，不设置默认是线性。
+
 ## License
 
     Copyright 2017, Halohoop
