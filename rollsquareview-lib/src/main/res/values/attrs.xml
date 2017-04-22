@@ -11,5 +11,6 @@
         <attr name="square_color" format="color"  />
         <attr name="roll_round_cornor" format="float"  />
         <attr name="fix_round_cornor" format="float"  />
+        <attr name="roll_interpolator" format="reference"  />
     </declare-styleable>
 </resources>

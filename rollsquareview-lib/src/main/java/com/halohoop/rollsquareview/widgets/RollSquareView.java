@@ -13,6 +13,8 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 
 import com.halohoop.rollsquareview.R;
 
@@ -47,6 +49,11 @@ public class RollSquareView extends View {
      */
     private boolean mIsReset = false;
     private int mSquareColor;
+    /**
+     * 动画插值器的全局变量
+     * 默认为线性
+     */
+    private Interpolator mRollInterpolator;
 
     public RollSquareView(Context context) {
         this(context, null);
@@ -68,6 +75,9 @@ public class RollSquareView extends View {
         mLineCount = typedArray.getInteger(R.styleable.RollSquareView_line_count, 3);
         mRollRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_roll_round_cornor, 10);
         mFixRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_fix_round_cornor, 10);
+        int rollInterpolatorResId = typedArray.getResourceId(R.styleable.RollSquareView_roll_interpolator,
+                android.R.anim.linear_interpolator);
+        mRollInterpolator = AnimationUtils.loadInterpolator(context, rollInterpolatorResId);
         int defaultColor = context.getResources().getColor(R.color.default_color);
         mSquareColor = typedArray.getColor(R.styleable.RollSquareView_square_color, defaultColor);
         mSpeed = typedArray.getInteger(R.styleable.RollSquareView_roll_speed, 250);
@@ -256,8 +266,10 @@ public class RollSquareView extends View {
             FixSquare currEmptyFixSquare = mFixSquares[mCurrEmptyPosition];
             FixSquare rollSquare = currEmptyFixSquare.next;
             AnimatorSet animatorSet = new AnimatorSet();
-            ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare, rollSquare);
+            ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare,
+                    rollSquare);
             ValueAnimator rollConrtroller = createRollValueAnimator();
+            animatorSet.setInterpolator(mRollInterpolator);
             animatorSet.playTogether(translateConrtroller, rollConrtroller);
             animatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
@@ -346,6 +358,7 @@ public class RollSquareView extends View {
 
     private ValueAnimator createRollValueAnimator() {
         ValueAnimator rollAnim = ValueAnimator.ofFloat(0, 90).setDuration(mSpeed);
+//        rollAnim.setInterpolator(mRollInterpolator);
         rollAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -364,6 +377,7 @@ public class RollSquareView extends View {
         PropertyValuesHolder left = null;
         PropertyValuesHolder top = null;
         ValueAnimator valueAnimator = new ValueAnimator().setDuration(mSpeed);
+//        valueAnimator.setInterpolator(mRollInterpolator);
         if (isNextRollLeftOrRight(currEmptyFixSquare, rollSquare)) {
             if (mIsClockwise && currEmptyFixSquare.index > rollSquare.index//顺时针且在第一行
                     || !mIsClockwise && currEmptyFixSquare.index > rollSquare.index) {//逆时针且在最后一行
