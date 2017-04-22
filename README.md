@@ -22,6 +22,7 @@ Demo:
         app:start_empty_position="3"
         app:is_clockwise="false"
         app:line_count="4"
+        app:roll_speed="250"
         app:fix_round_cornor="10"
         app:roll_round_cornor="30"
         android:visibility="visible"
@@ -41,6 +42,7 @@ Demo:
 * roll\_when\_show\_stop\_when\_hide:是否自动开始自定旋转，如果设置为false，则需要手动调用startRoll()方法(下文会提到)才会开始运动，设置为true则设置View.Visibility就会自动开始旋转。
 * square\_color:方块的颜色。使用十六进制代码的形式（如：#333、#8e8e8e）
 * roll\_interpolator:动画的插值器，不设置默认是线性。
+* roll\_speed:滚动的速度。
 
 ## License
 
