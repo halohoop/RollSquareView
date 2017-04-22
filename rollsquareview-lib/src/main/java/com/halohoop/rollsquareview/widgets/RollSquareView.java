@@ -81,8 +81,8 @@ public class RollSquareView extends View {
         int defaultColor = context.getResources().getColor(R.color.default_color);
         mSquareColor = typedArray.getColor(R.styleable.RollSquareView_square_color, defaultColor);
         mSpeed = typedArray.getInteger(R.styleable.RollSquareView_roll_speed, 250);
-        if (mLineCount < 3) {
-            mLineCount = 3;//至少要九个方块
+        if (mLineCount < 2) {
+            mLineCount = 2;//至少要四个方块
         }
         mHalfSquareWidth = typedArray.getDimension(R.styleable.RollSquareView_half_rect_width, 30);
         mDividerWidth = typedArray.getDimension(R.styleable.RollSquareView_rect_divier_width, 10);
