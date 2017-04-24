@@ -54,6 +54,7 @@ public class RollSquareView extends View {
      * 默认为线性
      */
     private Interpolator mRollInterpolator;
+    private AnimatorSet mAnimatorSet;
 
     public RollSquareView(Context context) {
         this(context, null);
@@ -267,13 +268,13 @@ public class RollSquareView extends View {
         mAllowRoll = true;
         FixSquare currEmptyFixSquare = mFixSquares[mCurrEmptyPosition];
         FixSquare rollSquare = currEmptyFixSquare.next;
-        AnimatorSet animatorSet = new AnimatorSet();
+        mAnimatorSet = new AnimatorSet();
         ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare,
                 rollSquare);
         ValueAnimator rollConrtroller = createRollValueAnimator();
-        animatorSet.setInterpolator(mRollInterpolator);
-        animatorSet.playTogether(translateConrtroller, rollConrtroller);
-        animatorSet.addListener(new AnimatorListenerAdapter() {
+        mAnimatorSet.setInterpolator(mRollInterpolator);
+        mAnimatorSet.playTogether(translateConrtroller, rollConrtroller);
+        mAnimatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
                 updateRollSquare();
@@ -307,7 +308,7 @@ public class RollSquareView extends View {
                 }
             }
         });
-        animatorSet.start();
+        mAnimatorSet.start();
     }
 
     private void updateRollSquare() {
