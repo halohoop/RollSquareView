@@ -38,10 +38,13 @@ Demo:
 * line\_count:一行的数量，最少为3
 * fix\_round\_cornor:固定的方框的圆角半径
 * roll\_round\_cornor:旋转的方框的圆角半径，如果这两个圆角半径设置成不一样的值就会得到上面图1的效果，设置成一样就是图2.
-* roll\_when\_show\_stop\_when\_hide:是否自动开始自定旋转，如果设置为false，则需要手动调用startRoll()方法(下文会提到)才会开始运动，设置为true则设置View.Visibility就会自动开始旋转。
 * square\_color:方块的颜色。使用十六进制代码的形式（如：#333、#8e8e8e）
 * roll\_interpolator:动画的插值器，不设置默认是线性。
 * roll\_speed:滚动的速度。
+
+## Branch Description
+
+* [new_branch1](https://github.com/halohoop/RollSquareView/tree/new_branch1):新增画棍子. 
 
 ## License
 
