@@ -27,7 +27,6 @@ Demo:
         app:roll_round_cornor="30"
         android:visibility="visible"
         app:roll_interpolator="@android:anim/anticipate_overshoot_interpolator"
-        app:roll_when_show_stop_when_hide="false"
         app:square_color="#ff820e" />
 
 ## Setting Description

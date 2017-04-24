@@ -7,24 +7,40 @@
     android:orientation="vertical"
     tools:context="com.halohoop.rollsquareview_demo.MainActivity">
 
-    <com.halohoop.rollsquareview.widgets.RollSquareView
-        android:id="@+id/rollSquareView1"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@drawable/default_bg"
-        app:half_rect_width="15dp"
-        app:rect_divier_width="8dp"
-        app:start_empty_position="3"
-        app:is_clockwise="false"
-        app:line_count="3"
-        app:roll_speed="250"
-        app:fix_round_cornor="30"
-        app:roll_round_cornor="3"
-        android:visibility="visible"
-        app:roll_interpolator="@android:anim/anticipate_overshoot_interpolator"
-        app:roll_when_show_stop_when_hide="false"
-        app:square_color="#9e40fb" />
+        android:layout_weight="4"
+        android:orientation="vertical">
+
+        <com.halohoop.rollsquareview.widgets.RollSquareView
+            android:id="@+id/rollSquareView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/default_bg"
+            android:visibility="visible"
+            app:fix_round_cornor="30"
+            app:half_rect_width="15dp"
+            app:is_clockwise="false"
+            app:line_count="3"
+            app:rect_divier_width="8dp"
+            app:roll_interpolator="@android:anim/anticipate_overshoot_interpolator"
+            app:roll_round_cornor="3"
+            app:roll_speed="250"
+            app:square_color="#9e40fb"
+            app:start_empty_position="3" />
+
+        <com.halohoop.rollsquareview_demo.MyPb
+            android:id="@+id/pb"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,21 +53,42 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="startRoll"
-            android:text="开始滚动" />
+            android:text="Roll开始滚动" />
 
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="stopRoll"
-            android:text="结束滚动" />
+            android:text="Roll结束滚动" />
 
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="resetRoll"
-            android:text="重置滚动" />
+            android:text="Roll重置滚动" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="showPb"
+            android:text="Pb显示" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="hidePb"
+            android:text="Pb隐藏" />
     </LinearLayout>
 
 

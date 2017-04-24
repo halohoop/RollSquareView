@@ -10,6 +10,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -43,7 +44,6 @@ public class RollSquareView extends View {
     private boolean mAllowRoll = false;
     private boolean mIsRolling = false;
     private int mSpeed = 250;
-    private boolean mRollWhenShowAndStopWhenHide = false;
     /**
      * 一个方块的动画结束的后是否需要重置(再从startEmpty开始)
      */
@@ -71,7 +71,6 @@ public class RollSquareView extends View {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RollSquareView);
-        mRollWhenShowAndStopWhenHide = typedArray.getBoolean(R.styleable.RollSquareView_roll_when_show_stop_when_hide, false);
         mLineCount = typedArray.getInteger(R.styleable.RollSquareView_line_count, 3);
         mRollRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_roll_round_cornor, 10);
         mFixRoundCornor = typedArray.getFloat(R.styleable.RollSquareView_fix_round_cornor, 10);
@@ -261,53 +260,54 @@ public class RollSquareView extends View {
     }
 
     public void startRoll() {
-        if (!mIsRolling && getVisibility() == View.VISIBLE) {
-            mAllowRoll = true;
-            FixSquare currEmptyFixSquare = mFixSquares[mCurrEmptyPosition];
-            FixSquare rollSquare = currEmptyFixSquare.next;
-            AnimatorSet animatorSet = new AnimatorSet();
-            ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare,
-                    rollSquare);
-            ValueAnimator rollConrtroller = createRollValueAnimator();
-            animatorSet.setInterpolator(mRollInterpolator);
-            animatorSet.playTogether(translateConrtroller, rollConrtroller);
-            animatorSet.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    mIsRolling = true;
-                    updateRollSquare();
-                    //让空square的next隐藏，现在FixSquares中那就是有两个隐藏了
-                    mFixSquares[mCurrEmptyPosition].next.isShow = false;
-                    //然后滚动的suqare需要显示出来
-                    mRollSquare.isShow = true;
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mIsRolling = false;
-                    mFixSquares[mCurrEmptyPosition].isShow = true;
-                    mCurrEmptyPosition = mFixSquares[mCurrEmptyPosition].next.index;
-                    //然后滚动的suqare隐藏
-                    mRollSquare.isShow = false;
-                    if (mAllowRoll) {
-                        startRoll();
-                    }
-                    if (mIsReset) {
-                        mCurrEmptyPosition = mStartEmptyPosition;
-                        //重置所有的
-                        for (int i = 0; i < mFixSquares.length; i++) {
-                            mFixSquares[i].isShow = true;
-                        }
-                        mFixSquares[mCurrEmptyPosition].isShow = false;
-                        updateRollSquare();
-                        invalidate();
-                        startRoll();
-                        mIsReset = false;
-                    }
-                }
-            });
-            animatorSet.start();
+        if (mIsRolling || getVisibility() != View.VISIBLE || getWindowVisibility() != VISIBLE) {
+            return;
         }
+        mIsRolling = true;
+        mAllowRoll = true;
+        FixSquare currEmptyFixSquare = mFixSquares[mCurrEmptyPosition];
+        FixSquare rollSquare = currEmptyFixSquare.next;
+        AnimatorSet animatorSet = new AnimatorSet();
+        ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare,
+                rollSquare);
+        ValueAnimator rollConrtroller = createRollValueAnimator();
+        animatorSet.setInterpolator(mRollInterpolator);
+        animatorSet.playTogether(translateConrtroller, rollConrtroller);
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                updateRollSquare();
+                //让空square的next隐藏，现在FixSquares中那就是有两个隐藏了
+                mFixSquares[mCurrEmptyPosition].next.isShow = false;
+                //然后滚动的suqare需要显示出来
+                mRollSquare.isShow = true;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mIsRolling = false;
+                mFixSquares[mCurrEmptyPosition].isShow = true;
+                mCurrEmptyPosition = mFixSquares[mCurrEmptyPosition].next.index;
+                //然后滚动的suqare隐藏
+                mRollSquare.isShow = false;
+                if (mAllowRoll) {
+                    startRoll();
+                }
+                if (mIsReset) {
+                    mCurrEmptyPosition = mStartEmptyPosition;
+                    //重置所有的
+                    for (int i = 0; i < mFixSquares.length; i++) {
+                        mFixSquares[i].isShow = true;
+                    }
+                    mFixSquares[mCurrEmptyPosition].isShow = false;
+                    updateRollSquare();
+                    invalidate();
+                    startRoll();
+                    mIsReset = false;
+                }
+            }
+        });
+        animatorSet.start();
     }
 
     private void updateRollSquare() {
@@ -454,12 +454,20 @@ public class RollSquareView extends View {
     }
 
     @Override
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-        if (visibility == View.VISIBLE) {
-            if (mRollWhenShowAndStopWhenHide) {
-                startRoll();
-            }
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (changedView == this && visibility == VISIBLE) {
+            startRoll();
+        } else if (changedView == this && visibility != VISIBLE) {
+            stopRoll();
+        }
+    }
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility == VISIBLE && getVisibility() == VISIBLE) {
+            startRoll();
         } else {
             stopRoll();
         }

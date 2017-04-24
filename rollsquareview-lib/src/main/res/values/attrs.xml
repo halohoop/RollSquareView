@@ -7,7 +7,6 @@
         <attr name="is_clockwise" format="boolean" />
         <attr name="line_count" format="integer"  />
         <attr name="roll_speed" format="integer"  />
-        <attr name="roll_when_show_stop_when_hide" format="boolean"  />
         <attr name="square_color" format="color"  />
         <attr name="roll_round_cornor" format="float"  />
         <attr name="fix_round_cornor" format="float"  />
