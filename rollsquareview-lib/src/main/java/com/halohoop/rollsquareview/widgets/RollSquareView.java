@@ -259,7 +259,7 @@ public class RollSquareView extends View {
         }
     }
 
-    public void startRoll() {
+    private void startRoll() {
         if (mIsRolling || getVisibility() != View.VISIBLE || getWindowVisibility() != VISIBLE) {
             return;
         }
@@ -316,7 +316,7 @@ public class RollSquareView extends View {
         setRollSquareRotateCenter(mRollSquare, mIsClockwise);
     }
 
-    public void stopRoll() {
+    private void stopRoll() {
         mAllowRoll = false;
     }
 

@@ -20,7 +20,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/default_bg"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:fix_round_cornor="30"
             app:half_rect_width="15dp"
             app:is_clockwise="false"
