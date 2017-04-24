@@ -111,6 +111,7 @@ public class RollSquareView extends View {
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(mSquareColor);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
         initSquares(mStartEmptyPosition);
     }
 
@@ -176,6 +177,16 @@ public class RollSquareView extends View {
         int index;
         boolean isShow;
         FixSquare next;
+        //是否要被伸出的棍子挡的
+        boolean isBlocked;
+        boolean hasStick;
+        /**
+         * 棍子的开始和结束点
+         */
+        float stickStartX;
+        float stickStartY;
+        float stickStopX;
+        float stickStopY;
     }
 
     private class RollSquare {
@@ -198,6 +209,52 @@ public class RollSquareView extends View {
         int cy = measuredHeight / 2;
         fixFixSquarePosition(mFixSquares, cx, cy, mDividerWidth, mHalfSquareWidth);
         fixRollSquarePosition(mFixSquares, mRollSquare, mStartEmptyPosition, mIsClockwise);
+
+        //需要被拦截的index距离伸出棍子的index的next数量
+//      int nextCountBlockedToBlocked = mLineCount * mLineCount - (mLineCount - 2) * (mLineCount - 2) - 2;
+        //化简以上公式
+        int nextCountBlockedToBlocked = 4 * mLineCount - 6;
+        int firstNeedBlockIndex = mIsClockwise ? /*0号的下面*/0 + mLineCount : /*0的右边*/0 + 1;
+        FixSquare firstNeedBlockFixSquare = mFixSquares[firstNeedBlockIndex];
+//        firstNeedBlockFixSquare.isBlocked = true;
+        for (int i = 0; i < 4; i++) {//还剩另外3条边的需要挑出来
+            for (int j = 0; j < mLineCount - 1; j++) {
+                firstNeedBlockFixSquare = firstNeedBlockFixSquare.next;
+            }
+            firstNeedBlockFixSquare.isBlocked = true;
+            FixSquare tmp = firstNeedBlockFixSquare;
+            for (int j = 0; j < nextCountBlockedToBlocked; j++) {
+                tmp = tmp.next;
+            }
+            tmp.hasStick = true;
+            int pos = tmp.index;
+            float delta = mDividerWidth + 3 * mHalfSquareWidth - mFixRoundCornor / 2;
+            if (pos < mLineCount) {//是否第一行
+                tmp.stickStartX = tmp.rectF.centerX();
+                tmp.stickStartY = tmp.rectF.top;
+                tmp.stickStopX = mIsClockwise ? tmp.stickStartX - delta
+                        : tmp.stickStartX + delta;
+                tmp.stickStopY = tmp.rectF.top;
+            } else if (pos > (mFixSquares.length - 1 - mLineCount)) {//是否最后一行
+                tmp.stickStartX = tmp.rectF.centerX();
+                tmp.stickStartY = tmp.rectF.bottom;
+                tmp.stickStopX = mIsClockwise ? tmp.stickStartX + delta
+                        : tmp.stickStartX - delta;
+                tmp.stickStopY = tmp.rectF.bottom;
+            } else if ((pos + 1) % mLineCount == 0) {//是否右边
+                tmp.stickStartX = tmp.rectF.right;
+                tmp.stickStartY = tmp.rectF.centerY();
+                tmp.stickStopX = tmp.rectF.right;
+                tmp.stickStopY = mIsClockwise ? tmp.stickStartY - delta
+                        : tmp.stickStartY + delta;
+            } else if (pos % mLineCount == 0) {//是否左边
+                tmp.stickStartX = tmp.rectF.left;
+                tmp.stickStartY = tmp.rectF.centerY();
+                tmp.stickStopX = tmp.rectF.left;
+                tmp.stickStopY = mIsClockwise ? tmp.stickStartY + delta
+                        : tmp.stickStartY - delta;
+            }
+        }
     }
 
     private void fixRollSquarePosition(FixSquare[] fixSquares,
@@ -272,7 +329,6 @@ public class RollSquareView extends View {
         ValueAnimator translateConrtroller = createTranslateValueAnimator(currEmptyFixSquare,
                 rollSquare);
         ValueAnimator rollConrtroller = createRollValueAnimator();
-        mAnimatorSet.setInterpolator(mRollInterpolator);
         mAnimatorSet.playTogether(translateConrtroller, rollConrtroller);
         mAnimatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -359,7 +415,7 @@ public class RollSquareView extends View {
 
     private ValueAnimator createRollValueAnimator() {
         ValueAnimator rollAnim = ValueAnimator.ofFloat(0, 90).setDuration(mSpeed);
-//        rollAnim.setInterpolator(mRollInterpolator);
+        rollAnim.setInterpolator(mRollInterpolator);
         rollAnim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -446,6 +502,12 @@ public class RollSquareView extends View {
         for (int i = 0; i < mFixSquares.length; i++) {
             if (mFixSquares[i].isShow) {
                 canvas.drawRoundRect(mFixSquares[i].rectF, mFixRoundCornor, mFixRoundCornor, mPaint);
+                if (mFixSquares[i].hasStick) {
+                    mPaint.setStrokeWidth(10);
+                    canvas.drawLine(mFixSquares[i].stickStartX, mFixSquares[i].stickStartY,
+                            mFixSquares[i].stickStopX, mFixSquares[i].stickStopY, mPaint);
+                }
+                mPaint.setStrokeWidth(1);
             }
         }
         if (mRollSquare.isShow) {
