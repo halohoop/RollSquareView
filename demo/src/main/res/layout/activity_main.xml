@@ -25,7 +25,7 @@
             app:roll_round_cornor="50"
             app:half_rect_width="15dp"
             app:is_clockwise="true"
-            app:line_count="9"
+            app:line_count="3"
             app:rect_divier_width="8dp"
             app:roll_interpolator="@android:anim/bounce_interpolator"
             app:roll_speed="500"

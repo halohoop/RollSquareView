@@ -45,6 +45,7 @@ Demo:
 ## Branch Description
 
 * [new_branch1](https://github.com/halohoop/RollSquareView/tree/new_branch1):新增画棍子. 
+![usage pic](./roll_demo4.gif)
 
 ## License
 
