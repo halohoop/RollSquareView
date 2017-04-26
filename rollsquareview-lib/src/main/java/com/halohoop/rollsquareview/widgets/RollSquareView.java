@@ -132,7 +132,7 @@ public class RollSquareView extends View {
     }
 
     private void linkTheOuterSquare(FixSquare[] fixSquares, boolean isClockwise) {
-        int lineCount = (int) Math.sqrt(mFixSquares.length);
+        int lineCount = (int) Math.sqrt(fixSquares.length);
         //连接第一行
         for (int i = 0; i < lineCount; i++) {
             if (i % lineCount == 0) {//位于最左边
