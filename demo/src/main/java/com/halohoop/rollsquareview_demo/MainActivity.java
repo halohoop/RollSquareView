@@ -40,4 +40,12 @@ public class MainActivity extends AppCompatActivity {
     public void hidePb(View view) {
         mPb.setVisibility(View.GONE);
     }
+
+    public void testRectInvalidate(View view) {
+        rollSquareView1.testRectInvalidate();
+    }
+    public void wholeInvalidate(View view) {
+        rollSquareView1.invalidate();
+    }
+
 }

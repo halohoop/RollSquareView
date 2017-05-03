@@ -8,7 +8,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,6 +57,7 @@ public class RollSquareView extends View {
      */
     private Interpolator mRollInterpolator;
     private AnimatorSet mAnimatorSet;
+    private Rect mDirtyRect;
 
     public RollSquareView(Context context) {
         this(context, null);
@@ -171,6 +174,11 @@ public class RollSquareView extends View {
         }
     }
 
+    RectF testRectF;
+    public void testRectInvalidate() {
+        testRectF = new RectF(mDirtyRect);
+    }
+
     private class FixSquare {
         RectF rectF;
         int index;
@@ -198,6 +206,22 @@ public class RollSquareView extends View {
         int cy = measuredHeight / 2;
         fixFixSquarePosition(mFixSquares, cx, cy, mDividerWidth, mHalfSquareWidth);
         fixRollSquarePosition(mFixSquares, mRollSquare, mStartEmptyPosition, mIsClockwise);
+        mDirtyRect = getDirtyRect(mFixSquares[0].rectF, mFixSquares[mFixSquares.length - 1].rectF);
+    }
+
+    private Rect getDirtyRect(RectF leftTopRectF, RectF rightBottomRectF) {
+        if (leftTopRectF != null && rightBottomRectF != null) {
+            float width = leftTopRectF.width();
+            float height = leftTopRectF.height();
+            float sqrt = (float) Math.sqrt(width * width + height * height);
+            float extra = sqrt - width;
+            Rect dirtyRectF = new Rect((int) (leftTopRectF.left - extra),
+                    (int) (leftTopRectF.top - extra),
+                    (int) (rightBottomRectF.right + extra),
+                    (int) (rightBottomRectF.bottom + extra));
+            return dirtyRectF;
+        }
+        return null;
     }
 
     private void fixRollSquarePosition(FixSquare[] fixSquares,
@@ -302,7 +326,11 @@ public class RollSquareView extends View {
                     }
                     mFixSquares[mCurrEmptyPosition].isShow = false;
                     updateRollSquare();
-                    invalidate();
+                    if (!isHardwareAccelerated()) {
+                        invalidate(mDirtyRect);
+                    } else {
+                        invalidate();
+                    }
                     startRoll();
                     mIsReset = false;
                 }
@@ -365,7 +393,11 @@ public class RollSquareView extends View {
             public void onAnimationUpdate(ValueAnimator animation) {
                 Object animatedValue = animation.getAnimatedValue();
                 mRotateDegree = (float) animatedValue;
-                invalidate();
+                if (!isHardwareAccelerated()) {
+                    invalidate(mDirtyRect);
+                } else {
+                    invalidate();
+                }
             }
         });
         return rollAnim;
@@ -420,7 +452,11 @@ public class RollSquareView extends View {
                     mRollSquare.rectF.offsetTo(mRollSquare.rectF.left, (Float) top);
                 }
                 setRollSquareRotateCenter(mRollSquare, mIsClockwise);
-                invalidate();
+                if (!isHardwareAccelerated()) {
+                    invalidate(mDirtyRect);
+                } else {
+                    invalidate();
+                }
             }
         });
         return valueAnimator;
@@ -443,6 +479,11 @@ public class RollSquareView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (testRectF != null) {
+            mPaint.setColor(Color.RED);
+            canvas.drawCircle(testRectF.centerX(),testRectF.centerY(),testRectF.width(),mPaint);
+            mPaint.setColor(mSquareColor);
+        }
         for (int i = 0; i < mFixSquares.length; i++) {
             if (mFixSquares[i].isShow) {
                 canvas.drawRoundRect(mFixSquares[i].rectF, mFixRoundCornor, mFixRoundCornor, mPaint);
