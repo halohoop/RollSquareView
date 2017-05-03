@@ -42,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testRectInvalidate(View view) {
-        rollSquareView1.testRectInvalidate();
+        //for test the rect invalidate
+//        rollSquareView1.testRectInvalidate();
+        //for test the rect invalidate
     }
     public void wholeInvalidate(View view) {
         rollSquareView1.invalidate();

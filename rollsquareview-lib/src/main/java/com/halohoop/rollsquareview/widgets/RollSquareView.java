@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -174,10 +173,10 @@ public class RollSquareView extends View {
         }
     }
 
-    RectF testRectF;
-    public void testRectInvalidate() {
-        testRectF = new RectF(mDirtyRect);
-    }
+//    RectF testRectF;
+//    public void testRectInvalidate() {
+//        testRectF = new RectF(mDirtyRect);
+//    }
 
     private class FixSquare {
         RectF rectF;
@@ -479,11 +478,14 @@ public class RollSquareView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (testRectF != null) {
-            mPaint.setColor(Color.RED);
-            canvas.drawCircle(testRectF.centerX(),testRectF.centerY(),testRectF.width(),mPaint);
-            mPaint.setColor(mSquareColor);
-        }
+        //for test the rect invalidate
+//        if (testRectF != null) {
+//            mPaint.setColor(Color.RED);
+//            canvas.drawCircle(testRectF.centerX(),testRectF.centerY(),testRectF.width(),mPaint);
+//            mPaint.setColor(mSquareColor);
+//        }
+        //for test the rect invalidate
+
         for (int i = 0; i < mFixSquares.length; i++) {
             if (mFixSquares[i].isShow) {
                 canvas.drawRoundRect(mFixSquares[i].rectF, mFixRoundCornor, mFixRoundCornor, mPaint);
