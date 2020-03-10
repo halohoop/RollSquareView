@@ -1,9 +1,8 @@
 # Halohoop Custom Widget
 # RollSquareView
 
-    作为原创者，星星数确实干不过一些热门博主，我也很无奈啊，以下链接为修改我的类名之后重新发的项目。
+    这里也有个类似的作品，虽然第一版提交稍晚，但是有更多的人气，大家可以去这个项目里沟通，社区庞大一点会热闹一点，😝。
     https://github.com/Carson-Ho/Kawaii_LoadingView
-    虽然如此，但也非常感谢此博主喜欢这个作品。
 
 ---
 ![usage pic](./roll_demo3.gif)
